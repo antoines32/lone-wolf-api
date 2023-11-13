@@ -6,8 +6,9 @@ import { Character } from 'src/adventure/schemas/character.schema';
 
 @Injectable()
 export class CharacterService {
-
-  constructor(@InjectModel(Character.name) private charModel: Model<Character>) {}
+  constructor(
+    @InjectModel(Character.name) private charModel: Model<Character>,
+  ) {}
 
   async create(createCharDto: CreateCharacterDto) {
     return this.charModel.create(createCharDto);
@@ -16,5 +17,4 @@ export class CharacterService {
   async findById(id: string) {
     return this.charModel.findById(id).exec();
   }
-
 }
