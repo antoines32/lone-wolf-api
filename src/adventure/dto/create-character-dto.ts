@@ -1,4 +1,6 @@
 export class CreateCharacterDto {
+  user: string;
+  bookName: string;
   characterName: string;
   combatSkill: number;
   endurancePoints: number;

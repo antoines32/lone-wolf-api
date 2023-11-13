@@ -7,6 +7,8 @@ export type ParagraphDocument = HydratedDocument<Paragraph>;
 export class Paragraph {
   @Prop()
   paragraphNumber: number;
+  @Prop()
+  bookName: string;
 }
 
 export const ParagraphSchema = SchemaFactory.createForClass(Paragraph);
