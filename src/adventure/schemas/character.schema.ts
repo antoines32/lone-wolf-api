@@ -9,19 +9,19 @@ export type CharacterDocument = HydratedDocument<Character>;
 export class Character {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
-  @Prop()
+  @Prop({ required: true })
   bookName: string;
-  @Prop()
+  @Prop({ required: true })
   characterName: string;
-  @Prop()
+  @Prop({ required: true })
   combatSkill: number;
-  @Prop()
+  @Prop({ required: true })
   endurancePoints: number;
   @Prop([String])
   kaiDisciplines: string[];
   @Prop([String])
   backpack: string[];
-  @Prop()
+  @Prop({ default: 0 })
   beltpouch: number;
   @Prop({ type: [{ type: { name: String, effect: String } }] })
   specialItems;

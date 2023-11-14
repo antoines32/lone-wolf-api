@@ -23,7 +23,7 @@ export class CharacterController {
     @Res() res: Response,
   ) {
     try {
-      const createdChar = this.charService.create(createCharDto);
+      const createdChar = await this.charService.create(createCharDto);
       return res.send({ status: 'success', data: createdChar });
     } catch (err) {
       res.send({ status: 'fail', message: err });
