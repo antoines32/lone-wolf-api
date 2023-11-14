@@ -21,7 +21,7 @@ export class UsersService {
     return this.userModel.findById(id).select('-__v').exec();
   }
 
-  async remove(id: string) {
-    this.userModel.findByIdAndDelete(id).exec();
+  async remove(id: string): Promise<User> {
+    return this.userModel.findByIdAndDelete(id).exec();
   }
 }

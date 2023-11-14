@@ -22,18 +22,26 @@ export class UsersController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string): Promise<User> {
-    return this.userService.findOne(id);
+  findById(@Param('id') id: string, @Res() res: Response): Promise<User> {
+    try {
+      return this.userService.findOne(id);
+    } catch (err) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ status: 'fail', message: err });
+    }
   }
 
   @Post()
   async createUser(
     @Body() userDto: UserDto,
     @Res() res: Response,
-  ): Promise<UserDto> {
+  ): Promise<Response<User>> {
     try {
-      await this.userService.create(userDto);
-      return userDto;
+      const createdUser = await this.userService.create(userDto);
+      return res
+        .status(HttpStatus.CREATED)
+        .send({ status: 'success', data: createdUser });
     } catch (err) {
       console.error(err);
       res
@@ -44,10 +52,23 @@ export class UsersController {
 
   @Delete(':id')
   async deleteUser(@Param('id') id: string, @Res() res: Response) {
-    await this.userService.remove(id);
-    res.status(HttpStatus.OK).send({
-      status: 'success',
-      message: `user with id ${id} successfully deleted`,
-    });
+    try {
+      const deletedUser = await this.userService.remove(id);
+      if (deletedUser) {
+        res.status(HttpStatus.OK).send({
+          status: 'success',
+          data: deletedUser,
+        });
+      } else {
+        res.status(HttpStatus.NOT_FOUND).send({
+          status: 'fail',
+          message: `user with id ${id} doesn't exist`,
+        });
+      }
+    } catch (err) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .send({ status: 'fail', message: err.message });
+    }
   }
 }
