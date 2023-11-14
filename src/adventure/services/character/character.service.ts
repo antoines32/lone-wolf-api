@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateCharacterDto } from 'src/adventure/dto/create-character-dto';
@@ -36,20 +36,31 @@ export class CharacterService {
   async getnextParagraphAndUpdateCharacter(
     idChara: string,
     characterDto: UpdateCharacterDto,
-    paragraphNumber: number
+    paragraphNumber: number,
   ) {
     characterDto.curentParagraph = await this.getParagraphByNumberAndBook(
       paragraphNumber,
-      characterDto.bookName
+      characterDto.bookName,
     );
-    return this.charModel
+    const updatedCharacter = await this.charModel
       .findOneAndReplace({ _id: idChara }, characterDto, { new: true })
       .exec();
+    if (!updatedCharacter) {
+      throw new NotFoundException(`Character not found`);
+    }
+    return updatedCharacter;
   }
 
   async getParagraphByNumberAndBook(paragraphNumber: number, bookName: string) {
-    return this.paraModel
+    const para = await this.paraModel
       .findOne({ paragraphNumber: paragraphNumber, bookName: bookName })
       .exec();
+    console.log(para);
+    if (!para) {
+      throw new NotFoundException(
+        `paragraph ${paragraphNumber} from book ${bookName} not found !`,
+      );
+    }
+    return para;
   }
 }

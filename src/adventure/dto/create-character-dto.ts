@@ -1,5 +1,10 @@
+import { IsNotEmpty } from "class-validator";
+
 export class CreateCharacterDto {
+  @IsNotEmpty()
   user: string;
+
+  
   bookName: string;
   characterName: string;
   combatSkill: number;

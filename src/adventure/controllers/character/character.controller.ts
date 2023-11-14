@@ -88,12 +88,16 @@ export class CharacterController {
   ) {
     try {
       const updatedCharacter =
-        this.charService.getnextParagraphAndUpdateCharacter(
+        await this.charService.getnextParagraphAndUpdateCharacter(
           id,
           updateCharacterDto,
           paragraphNumber,
         );
       res.send({ status: 'success', data: updatedCharacter });
-    } catch (err) {}
+    } catch (err) {
+      res
+        .status(err.response.statusCode)
+        .send({ status: err.response.error, message: err.response.message });
+    }
   }
 }
