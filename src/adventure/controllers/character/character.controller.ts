@@ -95,6 +95,7 @@ export class CharacterController {
         );
       res.send({ status: 'success', data: updatedCharacter });
     } catch (err) {
+      console.log(err);
       res
         .status(err.response.statusCode)
         .send({ status: err.response.error, message: err.response.message });
