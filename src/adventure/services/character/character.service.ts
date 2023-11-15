@@ -38,12 +38,13 @@ export class CharacterService {
     characterDto: UpdateCharacterDto,
     paragraphNumber: number,
   ) {
-    characterDto.curentParagraph = await this.getParagraphByNumberAndBook(
+    characterDto.currentParagraph = await this.getParagraphByNumberAndBook(
       paragraphNumber,
       characterDto.bookName,
     );
     const updatedCharacter = await this.charModel
       .findOneAndReplace({ _id: idChara }, characterDto, { new: true })
+      .populate('currentParagraph')
       .exec();
     if (!updatedCharacter) {
       throw new NotFoundException(`Character not found`);

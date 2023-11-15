@@ -54,5 +54,5 @@ export class UpdateCharacterDto {
   weapon2: string;
 
   @Type(() => Paragraph)
-  curentParagraph: Paragraph;
+  currentParagraph: Paragraph;
 }

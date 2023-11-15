@@ -29,8 +29,12 @@ export class Character {
   weapon1: string;
   @Prop()
   weapon2: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Paragraph' })
-  curentParagraph: Paragraph;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Paragraph',
+    default: '65524a353909ae23c60b6cf2',
+  })
+  currentParagraph: Paragraph;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);
