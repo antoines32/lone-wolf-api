@@ -24,7 +24,7 @@ export class CharacterController {
   ) {
     try {
       const createdChar = await this.charService.create(createCharDto);
-      return res.send({ status: 'success', data: createdChar });
+      return res.send(createdChar);
     } catch (err) {
       res.send({ status: 'fail', message: err });
     }
@@ -34,9 +34,7 @@ export class CharacterController {
   async getById(@Param('id') id: string, @Res() res: Response) {
     try {
       const character = this.charService.findById(id);
-      return res
-        .status(HttpStatus.OK)
-        .send({ status: 'success', data: character });
+      return res.status(HttpStatus.OK).send(character);
     } catch (err) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -48,9 +46,7 @@ export class CharacterController {
   async getByUserId(@Param('userId') userId: string, @Res() res: Response) {
     try {
       const foundCharacters = await this.charService.findByUserId(userId);
-      return res
-        .status(HttpStatus.OK)
-        .send({ status: 'success', data: foundCharacters });
+      return res.status(HttpStatus.OK).send(foundCharacters);
     } catch (err) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -93,12 +89,17 @@ export class CharacterController {
           updateCharacterDto,
           paragraphNumber,
         );
-      res.send({ status: 'success', data: updatedCharacter });
+      res.send(updatedCharacter);
     } catch (err) {
       console.log(err);
       res
         .status(err.response.statusCode)
         .send({ status: err.response.error, message: err.response.message });
     }
+  }
+
+  @Get(':id/close-adventure')
+  closeAdventure(@Param('id') idChara: string): string {
+    return `Félicitation ! L'aventure avec le perso ${idChara} est terminée !`;
   }
 }
