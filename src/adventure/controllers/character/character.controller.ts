@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -12,6 +11,7 @@ import {
 import { Response } from 'express';
 import { CreateCharacterDto } from 'src/adventure/dto/create-character-dto';
 import { UpdateCharacterDto } from 'src/adventure/dto/update-character-dto';
+import { Character } from 'src/adventure/schemas/character.schema';
 import { CharacterService } from 'src/adventure/services/character/character.service';
 
 @Controller('character')
@@ -20,81 +20,66 @@ export class CharacterController {
   @Post()
   async createCharacter(
     @Body() createCharDto: CreateCharacterDto,
-    @Res() res: Response,
-  ) {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Character> {
     try {
-      const createdChar = await this.charService.create(createCharDto);
-      return res.send(createdChar);
+      return this.charService.create(createCharDto);
     } catch (err) {
-      res.send({ status: 'fail', message: err });
+      res.send(err.response);
     }
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string, @Res() res: Response) {
+  async getById(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Character> {
     try {
-      const character = this.charService.findById(id);
-      return res.status(HttpStatus.OK).send(character);
+      return this.charService.findById(id);
     } catch (err) {
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ status: 'fail', message: err });
+      res.send(err.response);
     }
   }
 
   @Get('/user/:userId')
-  async getByUserId(@Param('userId') userId: string, @Res() res: Response) {
+  async getByUserId(
+    @Param('userId') userId: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Character[]> {
     try {
-      const foundCharacters = await this.charService.findByUserId(userId);
-      return res.status(HttpStatus.OK).send(foundCharacters);
+      return this.charService.findByUserId(userId);
     } catch (err) {
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ status: 'fail', message: err });
+      res.send(err.response);
     }
   }
 
   @Delete(':id')
-  async deleteById(@Param('id') id: string, @Res() res: Response) {
+  async deleteById(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Character> {
     try {
-      const deletedCharacter = await this.charService.delete(id);
-      if (deletedCharacter) {
-        res.send({
-          status: 'success',
-          message: `character successfully deleted`,
-        });
-      } else {
-        res
-          .status(HttpStatus.NOT_FOUND)
-          .send({ status: 'fail', message: `character not found` });
-      }
+      return this.charService.delete(id);
     } catch (err) {
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ status: 'fail', message: err });
+      res.send(err.response);
     }
   }
 
   @Put(':id/:paragraphNumber')
   async nextParagraph(
     @Param('id') id: string,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
     @Body() updateCharacterDto: UpdateCharacterDto,
     @Param('paragraphNumber') paragraphNumber: number,
-  ) {
+  ): Promise<Character> {
     try {
-      const updatedCharacter =
-        await this.charService.getnextParagraphAndUpdateCharacter(
-          id,
-          updateCharacterDto,
-          paragraphNumber,
-        );
-      res.send(updatedCharacter);
+      return this.charService.getnextParagraphAndUpdateCharacter(
+        id,
+        updateCharacterDto,
+        paragraphNumber,
+      );
     } catch (err) {
-      console.log(err);
-      res
-        .status(err.response.statusCode)
-        .send({ status: err.response.error, message: err.response.message });
+      res.send(err.response);
     }
   }
 
