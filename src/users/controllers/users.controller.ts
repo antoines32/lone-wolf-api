@@ -8,7 +8,9 @@ import {
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDto } from '../dto/user-dto';
@@ -18,6 +20,8 @@ import { UsersService } from '../services/users.service';
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
+
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAllUsers(
     @Res({ passthrough: true }) res: Response,
@@ -29,6 +33,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('user')
   async findByMailOrId(
     @Query('mail') mail: string,
@@ -42,6 +47,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async findById(
     @Param('id') id: string,
@@ -66,6 +72,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   async updateUser(
     @Param('id') id: string,
@@ -79,6 +86,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async deleteUser(
     @Param('id') id: string,

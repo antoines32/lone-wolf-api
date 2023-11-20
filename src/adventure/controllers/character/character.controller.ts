@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { CreateCharacterDto } from 'src/adventure/dto/create-character-dto';
 import { UpdateCharacterDto } from 'src/adventure/dto/update-character-dto';
@@ -17,6 +19,8 @@ import { CharacterService } from 'src/adventure/services/character/character.ser
 @Controller('character')
 export class CharacterController {
   constructor(private charService: CharacterService) {}
+
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createCharacter(
     @Body() createCharDto: CreateCharacterDto,
@@ -29,6 +33,7 @@ export class CharacterController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getById(
     @Param('id') id: string,
@@ -41,6 +46,7 @@ export class CharacterController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/user/:userId')
   async getByUserId(
     @Param('userId') userId: string,
@@ -53,6 +59,7 @@ export class CharacterController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async deleteById(
     @Param('id') id: string,
@@ -65,6 +72,7 @@ export class CharacterController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Put(':id/:paragraphNumber')
   async nextParagraph(
     @Param('id') id: string,
@@ -83,6 +91,7 @@ export class CharacterController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id/close-adventure')
   closeAdventure(@Param('id') idChara: string): string {
     return `Félicitation ! L'aventure avec le perso ${idChara} est terminée !`;
