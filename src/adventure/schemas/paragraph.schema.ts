@@ -8,7 +8,7 @@ import { UseKai } from './use-kai.schema';
 
 export type ParagraphDocument = HydratedDocument<Paragraph>;
 
-@Schema({ discriminatorKey: 'paragraphAction' })
+@Schema()
 export class Paragraph {
   @Prop({ required: true })
   paragraphNumber: number;
@@ -19,26 +19,20 @@ export class Paragraph {
   @Prop({ type: [String], required: true })
   bodyText: string[];
 
-  @Prop({
-    type: String,
-    enum: [Run.name, UseKai.name, ResolveAction.name, Ennemy.name, Item.name],
-  })
-  paragraphAction: string;
+  @Prop({ type: [Run] })
+  runs: Run[];
 
-  // @Prop({ type: [Run] })
-  // runs: Run[];
+  @Prop({ type: [UseKai] })
+  useKais: UseKai[];
 
-  // @Prop({ type: [UseKai] })
-  // useKais: UseKai[];
+  @Prop({ type: ResolveAction })
+  resolve: ResolveAction;
 
-  // @Prop({ type: ResolveAction })
-  // resolve: ResolveAction;
+  @Prop({ type: [Ennemy] })
+  ennemies: Ennemy[];
 
-  // @Prop({ type: [Ennemy] })
-  // ennemies: Ennemy[];
-
-  // @Prop({ type: [Item] })
-  // items: Item[];
+  @Prop({ type: [Item] })
+  items: Item[];
 }
 
 export const ParagraphSchema = SchemaFactory.createForClass(Paragraph);

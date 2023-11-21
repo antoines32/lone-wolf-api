@@ -1,11 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 export type ItemDocument = HydratedDocument<Item>;
 
-@Schema()
 export class Item {
-  paragraphAction: string;
   @Prop({ required: true })
   labelAction: string;
   @Prop({ required: true })
