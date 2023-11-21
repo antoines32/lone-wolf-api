@@ -13,9 +13,7 @@ export class UsersService {
 
   async create(userDto: UserDto): Promise<User> {
     const clone = { role: roleConstants.user, ...userDto };
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(clone.userPwd, salt);
-    clone.userPwd = hash;
+    clone.userPwd = await this.encrypt(userDto.userPwd);
     const createdUser = this.userModel.create(clone);
     return createdUser;
   }
@@ -42,6 +40,9 @@ export class UsersService {
   }
 
   async update(id: string, user: UpdateUserDto): Promise<User> {
+    if (user.userPwd) {
+      user.userPwd = await this.encrypt(user.userPwd);
+    }
     const updatedUser = await this.userModel
       .findByIdAndUpdate(id, user, { new: true })
       .select('-__v')
@@ -50,5 +51,10 @@ export class UsersService {
       throw new NotFoundException(`User ${id} not found`);
     }
     return updatedUser;
+  }
+
+  private async encrypt(userPwd: string): Promise<string> {
+    const salt = await bcrypt.genSalt();
+    return await bcrypt.hash(userPwd, salt);
   }
 }
