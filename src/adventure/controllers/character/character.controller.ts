@@ -16,8 +16,6 @@ import { UpdateCharacterDto } from 'src/adventure/dto/update-character-dto';
 import { Character } from 'src/adventure/schemas/character.schema';
 import { CharacterService } from 'src/adventure/services/character/character.service';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { roleConstants } from 'src/constants/roles.const';
-import { Roles } from 'src/custom-decorators/roles.decorator';
 
 @Controller('character')
 @UseGuards(AuthGuard('jwt'), RolesGuard)

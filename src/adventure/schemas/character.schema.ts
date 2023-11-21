@@ -43,7 +43,7 @@ export class Character {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Paragraph',
-    default: '65524a353909ae23c60b6cf2',
+    default: '6554d51823094d3cd7291663',
   })
   currentParagraph: Paragraph;
 }

@@ -5,6 +5,7 @@ import { roleConstants } from 'src/constants/roles.const';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDto } from '../dto/user-dto';
 import { User } from '../schemas/user.schema';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +13,9 @@ export class UsersService {
 
   async create(userDto: UserDto): Promise<User> {
     const clone = { role: roleConstants.user, ...userDto };
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(clone.userPwd, salt);
+    clone.userPwd = hash;
     const createdUser = this.userModel.create(clone);
     return createdUser;
   }
