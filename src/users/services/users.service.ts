@@ -10,7 +10,8 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async create(userDto: UserDto): Promise<User> {
-    const createdUser = this.userModel.create(userDto);
+    const clone = { role: 'user', ...userDto };
+    const createdUser = this.userModel.create(clone);
     return createdUser;
   }
 

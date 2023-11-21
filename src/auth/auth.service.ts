@@ -37,15 +37,10 @@ export class AuthService {
     const payload = {
       createdAt: new Date().toISOString(),
       sub: foundUser.userName,
-      role: '',
+      role: foundUser.role,
     };
-    if (foundUser.userMail === 'antoine@toto.com') {
-      payload.role = 'Admin';
-    } else {
-      payload.role = 'user';
-    }
     return {
       access_token: this.jwtService.sign(payload),
-    }
+    };
   }
 }
