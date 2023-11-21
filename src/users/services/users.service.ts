@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { roleConstants } from 'src/constants/roles.const';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDto } from '../dto/user-dto';
 import { User } from '../schemas/user.schema';
@@ -10,7 +11,7 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async create(userDto: UserDto): Promise<User> {
-    const clone = { role: 'user', ...userDto };
+    const clone = { role: roleConstants.user, ...userDto };
     const createdUser = this.userModel.create(clone);
     return createdUser;
   }

@@ -12,16 +12,21 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { roleConstants } from 'src/constants/roles.const';
+import { Roles } from 'src/custom-decorators/roles.decorator';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDto } from '../dto/user-dto';
 import { User } from '../schemas/user.schema';
 import { UsersService } from '../services/users.service';
 
 @Controller('users')
+@UseGuards(RolesGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @UseGuards(AuthGuard('jwt'))
+  @Roles([roleConstants.admin])
   @Get()
   async findAllUsers(
     @Res({ passthrough: true }) res: Response,
@@ -87,6 +92,7 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Roles([roleConstants.admin])
   @Delete(':id')
   async deleteUser(
     @Param('id') id: string,

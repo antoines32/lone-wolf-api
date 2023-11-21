@@ -15,12 +15,15 @@ import { CreateCharacterDto } from 'src/adventure/dto/create-character-dto';
 import { UpdateCharacterDto } from 'src/adventure/dto/update-character-dto';
 import { Character } from 'src/adventure/schemas/character.schema';
 import { CharacterService } from 'src/adventure/services/character/character.service';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { roleConstants } from 'src/constants/roles.const';
+import { Roles } from 'src/custom-decorators/roles.decorator';
 
 @Controller('character')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class CharacterController {
   constructor(private charService: CharacterService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
   async createCharacter(
     @Body() createCharDto: CreateCharacterDto,
@@ -33,7 +36,6 @@ export class CharacterController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getById(
     @Param('id') id: string,
@@ -46,7 +48,6 @@ export class CharacterController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('/user/:userId')
   async getByUserId(
     @Param('userId') userId: string,
@@ -59,7 +60,6 @@ export class CharacterController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async deleteById(
     @Param('id') id: string,
@@ -72,7 +72,6 @@ export class CharacterController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Put(':id/:paragraphNumber')
   async nextParagraph(
     @Param('id') id: string,
@@ -91,7 +90,6 @@ export class CharacterController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id/close-adventure')
   closeAdventure(@Param('id') idChara: string): string {
     return `Félicitation ! L'aventure avec le perso ${idChara} est terminée !`;

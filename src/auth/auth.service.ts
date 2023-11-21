@@ -15,6 +15,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
+    console.log('je suis le validate du service auth');
     const user = await this.usersService.findByMailOrId(username, null);
     if (user && user.userPwd === pass) {
       const { userPwd, ...result } = user;
@@ -36,8 +37,11 @@ export class AuthService {
     }
     const payload = {
       createdAt: new Date().toISOString(),
-      sub: foundUser.userName,
-      role: foundUser.role,
+      sub: {
+        userMail: foundUser.userMail,
+        userName: foundUser.userName,
+        userRole: foundUser.role,
+      },
     };
     return {
       access_token: this.jwtService.sign(payload),
