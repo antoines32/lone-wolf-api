@@ -5,15 +5,19 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AdventureModule } from './adventure/adventure.module';
+import { AuthModule } from './auth/auth.module';
+import config from './config/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      load: [config],
+      isGlobal: true,
+    }),
     UsersModule,
-    MongooseModule.forRoot(
-      'mongodb+srv://ASUser:QfQYPAkCpb830n1Y@atlascluster.4glktdb.mongodb.net/AdventureBook?retryWrites=true&w=majority',
-    ),
+    MongooseModule.forRoot(process.env.DATABASE_CONN_STRING),
     AdventureModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

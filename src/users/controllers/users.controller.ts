@@ -3,72 +3,105 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
+  Patch,
   Post,
+  Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { roleConstants } from 'src/constants/roles.const';
+import { Roles } from 'src/custom-decorators/roles.decorator';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDto } from '../dto/user-dto';
 import { User } from '../schemas/user.schema';
 import { UsersService } from '../services/users.service';
 
 @Controller('users')
+@UseGuards(RolesGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
+
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([roleConstants.admin])
   @Get()
-  async findAllUsers(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAllUsers(
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User[]> {
+    try {
+      return this.userService.findAll();
+    } catch (err) {
+      res.status(err.response.statusCode).send(err.response);
+    }
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('user')
+  async findByMailOrId(
+    @Query('mail') mail: string,
+    @Query('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
+    try {
+      return this.userService.findByMailOrId(mail, id);
+    } catch (err) {
+      res.send(err.response);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  findById(@Param('id') id: string, @Res() res: Response): Promise<User> {
+  async findById(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
     try {
       return this.userService.findOne(id);
     } catch (err) {
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ status: 'fail', message: err });
+      res.status(err.response.statusCode).send(err.response);
     }
   }
 
   @Post()
   async createUser(
     @Body() userDto: UserDto,
-    @Res() res: Response,
-  ): Promise<Response<User>> {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
     try {
-      const createdUser = await this.userService.create(userDto);
-      return res
-        .status(HttpStatus.CREATED)
-        .send({ status: 'success', data: createdUser });
+      return this.userService.create(userDto);
     } catch (err) {
-      console.error(err);
-      res
-        .status(HttpStatus.BAD_REQUEST)
-        .send({ status: 'fail', message: `${err.message}` });
+      res.status(err.response.statusCode).send(err.response);
     }
   }
 
-  @Delete(':id')
-  async deleteUser(@Param('id') id: string, @Res() res: Response) {
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() body: UpdateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
     try {
-      const deletedUser = await this.userService.remove(id);
-      if (deletedUser) {
-        res.status(HttpStatus.OK).send({
-          status: 'success',
-          data: deletedUser,
-        });
-      } else {
-        res.status(HttpStatus.NOT_FOUND).send({
-          status: 'fail',
-          message: `user with id ${id} doesn't exist`,
-        });
-      }
+      return this.userService.update(id, body);
     } catch (err) {
-      res
-        .status(HttpStatus.NOT_FOUND)
-        .send({ status: 'fail', message: err.message });
+      res.send(err.response);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([roleConstants.admin])
+  @Delete(':id')
+  async deleteUser(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
+    try {
+      return this.userService.remove(id);
+    } catch (err) {
+      res.status(err.response.statusCode).send(err.response);
     }
   }
 }
