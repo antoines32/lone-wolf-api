@@ -25,6 +25,7 @@ export class CharacterService {
     return this.charModel
       .find({ user: userId })
       .select(['-user', '-__v'])
+      .populate('currentParagraph')
       .exec();
   }
 

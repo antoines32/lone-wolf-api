@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/services/users.service';
 import { AuthenticateUserDto } from './dto/authenticate-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -15,11 +16,12 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    console.log('je suis le validate du service auth');
     const user = await this.usersService.findByMailOrId(username, null);
-    if (user && user.userPwd === pass) {
-      const { userPwd, ...result } = user;
-      return result;
+    if (user) {
+      if (this.compareHash(pass, user.userPwd)) {
+        const { userPwd, ...result } = user;
+        return result;
+      }
     }
     return null;
   }
@@ -32,7 +34,11 @@ export class AuthService {
     if (!foundUser) {
       throw new UnauthorizedException();
     }
-    if (foundUser.userPwd !== authUserDto.userPwd) {
+    const isPwdValid = await this.compareHash(
+      authUserDto.userPwd,
+      foundUser.userPwd,
+    );
+    if (!isPwdValid) {
       throw new NotFoundException();
     }
     const payload = {
@@ -46,5 +52,9 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  private async compareHash(passwordDto, hashedPassword): Promise<boolean> {
+    return bcrypt.compare(passwordDto, hashedPassword);
   }
 }
