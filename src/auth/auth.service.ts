@@ -34,7 +34,11 @@ export class AuthService {
     if (!foundUser) {
       throw new UnauthorizedException();
     }
-    if (!this.compareHash(authUserDto.userPwd, foundUser.userPwd)) {
+    const isPwdValid = await this.compareHash(
+      authUserDto.userPwd,
+      foundUser.userPwd,
+    );
+    if (!isPwdValid) {
       throw new NotFoundException();
     }
     const payload = {
