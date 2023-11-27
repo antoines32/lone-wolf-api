@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByMailOrId(username, null);
@@ -52,10 +52,11 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       authenticated_user: {
+        _id: foundUser._id,
         userMail: foundUser.userMail,
         userName: foundUser.userName,
         userRole: foundUser.role,
-      }
+      },
     };
   }
 
