@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByMailOrId(username, null);
@@ -32,14 +32,14 @@ export class AuthService {
       null,
     );
     if (!foundUser) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Bad credential');
     }
     const isPwdValid = await this.compareHash(
       authUserDto.userPwd,
       foundUser.userPwd,
     );
     if (!isPwdValid) {
-      throw new NotFoundException();
+      throw new UnauthorizedException('Bad credential');
     }
     const payload = {
       createdAt: new Date().toISOString(),
@@ -51,6 +51,11 @@ export class AuthService {
     };
     return {
       access_token: this.jwtService.sign(payload),
+      authenticated_user: {
+        userMail: foundUser.userMail,
+        userName: foundUser.userName,
+        userRole: foundUser.role,
+      }
     };
   }
 
