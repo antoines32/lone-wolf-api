@@ -78,14 +78,14 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Patch(':id')
+  @Patch(':mail')
   async updateUser(
-    @Param('id') id: string,
+    @Param('mail') mail: string,
     @Body() body: UpdateUserDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<User> {
+  ) {
     try {
-      return this.userService.update(id, body);
+      return this.userService.update(mail, body);
     } catch (err) {
       res.send(err.response);
     }

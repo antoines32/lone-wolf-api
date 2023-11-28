@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { roleConstants } from 'src/constants/roles.const';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDto } from '../dto/user-dto';
@@ -39,16 +39,16 @@ export class UsersService {
     return deletedUser;
   }
 
-  async update(id: string, user: UpdateUserDto): Promise<User> {
+  async update(mail: string, user: UpdateUserDto): Promise<User> {
     if (user.userPwd) {
       user.userPwd = await this.encrypt(user.userPwd);
     }
     const updatedUser = await this.userModel
-      .findByIdAndUpdate(id, user, { new: true })
+      .findOneAndUpdate({ userMail: mail }, user, { new: true })
       .select('-__v')
       .exec();
     if (!updatedUser) {
-      throw new NotFoundException(`User ${id} not found`);
+      throw new NotFoundException(`User ${mail} not found`);
     }
     return updatedUser;
   }

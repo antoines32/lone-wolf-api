@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/services/users.service';
 import { AuthenticateUserDto } from './dto/authenticate-user.dto';
@@ -52,7 +48,6 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       authenticated_user: {
-        _id: foundUser._id,
         userMail: foundUser.userMail,
         userName: foundUser.userName,
         userRole: foundUser.role,
