@@ -11,6 +11,9 @@ import {
   KaiDiscipline,
   KaiDisciplineSchema,
 } from './schemas/kai-discipline.schema';
+import { RandomItem, RandomItemSchema } from './schemas/random-item.schema';
+import { ItemService } from './services/item/item.service';
+import { ItemController } from './controllers/item/item.controller';
 
 @Module({
   imports: [
@@ -18,13 +21,15 @@ import {
       { name: Character.name, schema: CharacterSchema },
       { name: Paragraph.name, schema: ParagraphSchema },
       { name: KaiDiscipline.name, schema: KaiDisciplineSchema },
+      { name: RandomItem.name, schema: RandomItemSchema }
     ]),
   ],
   controllers: [
     CharacterController,
     ParagraphController,
     KaiDisciplineController,
+    ItemController,
   ],
-  providers: [CharacterService, KaiDisciplineService],
+  providers: [CharacterService, KaiDisciplineService, ItemService],
 })
-export class AdventureModule {}
+export class AdventureModule { }
