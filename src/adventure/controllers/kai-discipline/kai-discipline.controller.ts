@@ -11,8 +11,9 @@ import { Roles } from 'src/custom-decorators/roles.decorator';
 @UseGuards(RolesGuard)
 export class KaiDisciplineController {
   constructor(private kaiDisciplineService: KaiDisciplineService) {}
-  @Get()
+
   @UseGuards(AuthGuard('jwt'))
+  @Get()
   async getAllKai(
     @Res({ passthrough: true }) res: Response,
   ): Promise<KaiDiscipline[]> {
